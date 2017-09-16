@@ -1,4 +1,4 @@
-# GoldenEye 
+# PlatinumEye 
 
 GoldenEye is an python app for SECURITY TESTING PURPOSES ONLY!
 
