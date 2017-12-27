@@ -4,7 +4,8 @@
 import os
 import sys
 from abc import ABC, abstractmethod
-from urllib.request import urlopen, urljoin
+from urllib.parse import urljoin
+from urllib.request import urlopen
 from re import search
 
 from bs4 import BeautifulSoup
@@ -72,7 +73,7 @@ class WhatIsMyBrowserCrawler(UserAgentExampleStringsCrawler):
                                 with urlopen(urljoin(self.host, fld_nm_pg_a['href'], str(page_number))) as header:
                                     soup = BeautifulSoup(header.read(), "html.parser")
                                     for td in soup.find_all('td', {'class': 'useragent'}):
-                                        out_file.write(td.a.text.strip(' \t\n\r') + '\n')
+                                        print(td.a.text.strip(' \t\n\r'), file=out_file)
 
 
 class UserAgentStringCrawler(UserAgentExampleStringsCrawler):
