@@ -102,3 +102,7 @@ ENV/
 
 # idea
 .idea/
+
+# user agent strings files
+plateye/usragent/strings-files/
+!plateye/usragent/strings-files/goldeneye-legacy/
