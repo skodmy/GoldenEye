@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 
 class UserAgentExampleStringsCrawler(ABC):
+    host = ''
     url = ''
 
     @abstractmethod
@@ -25,6 +26,7 @@ class UserAgentExampleStringsCrawler(ABC):
 
 
 class WhatIsMyBrowserCrawler(UserAgentExampleStringsCrawler):
+    host = 'https://developers.whatismybrowser.com'
     url = 'https://developers.whatismybrowser.com/useragents/explore/'
 
     # def __init__(self):
@@ -32,11 +34,18 @@ class WhatIsMyBrowserCrawler(UserAgentExampleStringsCrawler):
 
     def parse(self, web_resource):
         web_resource = web_resource.find('ul', {'id': 'listing-by-field-name'})
-        for li in web_resource:
-            gen = (ul for ul in li.find('ul') if ul != -1)
-            for ili in gen:
-                print(ili.find('a'))
-        # print(web_resource)
+        for li in web_resource.find_all('li'):
+            if li.ul is not None:
+                for lli in li.ul:
+                    a = lli.find('a')
+                    if a != -1:
+                        with urlopen(self.host + a['href']) as header:
+                            with open('res/{}'.format(a.text.lower()), 'w') as out_file:
+                                soup = BeautifulSoup(header.read(), "html.parser")
+                                print()
+                                # for td in soup.find_all('td', {'class': 'useragent'}):
+                                    # print(td)
+                                    # out_file.write(td.a.text.strip(' \t\n\r'))
 
 
 # def fetch_user_agents_lists(url: str):

