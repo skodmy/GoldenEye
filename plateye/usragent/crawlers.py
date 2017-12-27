@@ -40,8 +40,8 @@ class UserAgentExampleStringsCrawler(ABC):
 
 
 class WhatIsMyBrowserCrawler(UserAgentExampleStringsCrawler):
-    host = 'https://developers.whatismybrowser.com'
-    crawl_url = 'https://developers.whatismybrowser.com/useragents/explore/'
+    host = 'https://developers.whatismybrowser.com/'
+    crawl_url = urljoin(host, '/useragents/explore/')
 
     def parse(self, beautiful_soup):
         for field_name_li in beautiful_soup.find('ul', {'id': 'listing-by-field-name'}).find_all('li'):
@@ -75,17 +75,26 @@ class WhatIsMyBrowserCrawler(UserAgentExampleStringsCrawler):
                                         out_file.write(td.a.text.strip(' \t\n\r') + '\n')
 
 
-# def fetch_user_agents_lists(url: str):
-#     try:
-#         with urllib.request.urlopen(url) as web_file:
-#             soup = BeautifulSoup(web_file.read(), "html.parser")
-#     except ValueError as error:
-#         print(error)
-#     else:
-#         user_agents = soup.find('div', {'id': 'liste'}).find_all('li')
-#         print(user_agents)
-#         if len(user_agents) <= 0:
-#             print("No UAs Found. Are you on http://www.useragentstring.com/ lists?")
-#             sys.exit(0)
-#         for user_agent in user_agents:
-#             print(user_agent.get_text().strip(' \t\n\r'))
+class UserAgentStringCrawler(UserAgentExampleStringsCrawler):
+    host = 'http://www.useragentstring.com/'
+    crawl_url = urljoin(host, '/pages/useragentstring.php?name=All')
+
+    def parse(self, beautiful_soup: BeautifulSoup):
+        """
+        Parses markup.
+
+        Something wrong with markup or bs4 doesn't parse it well.
+
+        :param beautiful_soup:
+        :return:
+        """
+        with open(os.path.join(self.save_dir, 'all.txt'), 'w') as out_file:
+            for ul in beautiful_soup.find_all('ul'):
+                for li in ul:
+                    if li.a is not None:
+                        print(li.a.text.strip(' \t\n\r'), file=out_file)
+
+
+def get_crawler_class_by_name(value: str) -> type:
+    value = ''.join([word.title() for word in value.split('_')]).strip() + 'Crawler'
+    return getattr(sys.modules[__name__], value, None.__class__)
